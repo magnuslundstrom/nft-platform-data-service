@@ -23,6 +23,8 @@ services:
             - ./api:/usr/api
         depends_on:
             - db
+        env_file:
+            - db.env
 
     listener:
         build: ${PWD}/listener/.
@@ -32,6 +34,8 @@ services:
             - ./listener:/usr/listener
         depends_on:
             - db
+        env_file:
+            - db.env
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
