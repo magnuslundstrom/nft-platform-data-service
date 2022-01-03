@@ -1,3 +1,5 @@
+# inspired from https://github.com/magnuslundstrom/test-db-orm-setup/blob/master/docker-compose.yml
+
 version: '3.7'
 
 services:
