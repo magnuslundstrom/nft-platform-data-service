@@ -1,4 +1,4 @@
-# NFT-platform-data-service (Proof of concept)
+# NFT-platform-data-service (POC)
 
 The NFT-platform-data-service does, despite the singular spelling, consist of 3 core services contained in a docker-compose environment. 
 
