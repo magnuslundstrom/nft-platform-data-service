@@ -2,6 +2,10 @@
 
 The NFT-platform-data-service does, despite the singular spelling, consist of 3 core services contained in a docker-compose environment. 
 
+
+### Important note
+Setup to work with http://188.166.167.63:8545 only at the moment, while POC is getting worked on.
+
 ## Database
 The database contains data about contracts, tokens, and auctions. Both the listener and API speaks to the same database.
 ![image](https://user-images.githubusercontent.com/45564667/148107659-c07ae84a-451a-4ba6-919b-9a1b11722316.png)

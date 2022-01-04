@@ -37,3 +37,4 @@ export const contracts = {
 };
 
 export const mintContract = contracts.dev.mint;
+export const auctionContract = contracts.dev.auction;
