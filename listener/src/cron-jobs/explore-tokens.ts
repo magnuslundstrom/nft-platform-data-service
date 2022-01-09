@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
 import connection from '../db';
 import { mintContract } from '../constants/contracts';
+import { digitalO } from '../constants/chains';
 
-const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
+const provider = new ethers.providers.JsonRpcProvider(digitalO);
 
 const { address, abi } = mintContract;
 
@@ -51,6 +52,9 @@ const runner = () => {
         })
         .catch((err) => {
             console.log(err);
+        })
+        .finally(() => {
+            connection.destroy();
         });
 };
 

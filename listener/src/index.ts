@@ -1,5 +1,9 @@
+import './listeners/NFTBuy';
+import './listeners/CreateAuction';
+import './listeners/RemoveAuction';
+
 async function main() {
-    // should initialize all listeners
+    console.log('Started listener service');
 }
 
 main();
