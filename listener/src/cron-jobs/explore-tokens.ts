@@ -1,4 +1,6 @@
 import { ethers } from 'ethers';
+import axios from 'axios';
+import { sqlFormatter } from '../helpers/sqlFormatter';
 import connection from '../db';
 import { mintContract } from '../constants/contracts';
 import { digitalO } from '../constants/chains';
@@ -31,24 +33,60 @@ const getTokens = async () => {
 const saveTokens = async (tokens: any[]) => {
     for (let i = 0; i < tokens.length; i++) {
         const { tokenURI, owner, tokenId, contractAddress } = tokens[i];
-        const sql = `INSERT into tokens (
+        const data = await axios.get(tokenURI);
+        const { name, description, image, attributes } = data.data as any;
+
+        let sql = `INSERT into tokens (
             contract_address_fk,
             token_id,
             token_uri,
-            owner
-        ) VALUES (?, ?, ?, ?)`;
+            owner,
+            name,
+            description,
+            image
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-        connection.query(sql, [contractAddress, tokenId, tokenURI, owner], (err) => {
-            if (err) console.log(err.message);
-        });
+        connection.query(
+            sql,
+            [contractAddress, tokenId, tokenURI, owner, name, description, image],
+            (err, results) => {
+                if (err) return console.log(err.message);
+                const tokenInsertId = results.insertId;
+                if (tokenInsertId && Array.isArray(attributes)) {
+                    attributes.forEach(({ trait_type, value }) => {
+                        sql = `INSERT INTO traits (
+                            contract_address_fk,
+                            trait_type
+                        ) VALUES (?, ?)`;
+                        connection.query(sqlFormatter(sql), [contractAddress, trait_type], (err, result) => {
+                            if (err) return console.log(err.message);
+                            const traitInsertId = result.insertId;
+                            sql = `INSERT INTO token_traits (
+                                trait_fk,
+                                trait_value,
+                                token_id_fk
+                            ) VALUES (?, ?, ?)`;
+
+                            connection.query(
+                                sqlFormatter(sql),
+                                [traitInsertId, value, tokenInsertId],
+                                (err) => {
+                                    if (err) console.log(err.message);
+                                }
+                            );
+                        });
+                    });
+                }
+            }
+        );
     }
 };
 
 const runner = () => {
     getTokens()
-        .then((tokens) => {
+        .then(async (tokens) => {
             console.log('writing in explore-tokens.ts');
-            saveTokens(tokens as any[]);
+            await saveTokens(tokens as any[]);
         })
         .catch((err) => {
             console.log(err);
