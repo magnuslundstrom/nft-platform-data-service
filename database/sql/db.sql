@@ -36,10 +36,10 @@ CREATE TABLE `auctions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mint-contracts`
+-- Table structure for table `mint_contracts`
 --
 
-CREATE TABLE `mint-contracts` (
+CREATE TABLE `mint_contracts` (
   `address` varchar(255) NOT NULL,
   `chainId` smallint(6) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -49,10 +49,10 @@ CREATE TABLE `mint-contracts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `mint-contracts`
+-- Dumping data for table `mint_contracts`
 --
 
-INSERT INTO `mint-contracts` (`address`, `chainId`, `name`, `symbol`, `submit_date`, `approved`) VALUES
+INSERT INTO `mint_contracts` (`address`, `chainId`, `name`, `symbol`, `submit_date`, `approved`) VALUES
 ('0x89C627dE4643764Ab95bEbB9e6F75876084F1c10', 1337, 'mint', 'NFT-platform', '2022-01-03 00:41:30', 1);
 
 -- --------------------------------------------------------
@@ -124,9 +124,9 @@ ALTER TABLE `auctions`
   ADD PRIMARY KEY (`contract_address_fk`,`token_id_fk`);
 
 --
--- Indexes for table `mint-contracts`
+-- Indexes for table `mint_contracts`
 --
-ALTER TABLE `mint-contracts`
+ALTER TABLE `mint_contracts`
   ADD PRIMARY KEY (`address`);
 
 --

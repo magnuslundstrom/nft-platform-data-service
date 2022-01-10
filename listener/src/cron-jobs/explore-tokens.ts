@@ -51,29 +51,43 @@ const saveTokens = async (tokens: any[]) => {
             [contractAddress, tokenId, tokenURI, owner, name, description, image],
             (err, results) => {
                 if (err) return console.log(err.message);
-                const tokenInsertId = results.insertId;
+                const tokenInsertId = results?.insertId;
+                // Token has now been insert without errors,
+                // Now we need to same the attributes. First let's check if an attribute already exists like this for the contract_address_fk
                 if (tokenInsertId && Array.isArray(attributes)) {
                     attributes.forEach(({ trait_type, value }) => {
-                        sql = `INSERT INTO traits (
-                            contract_address_fk,
-                            trait_type
-                        ) VALUES (?, ?)`;
-                        connection.query(sqlFormatter(sql), [contractAddress, trait_type], (err, result) => {
-                            if (err) return console.log(err.message);
-                            const traitInsertId = result.insertId;
+                        sql = `SELECT * FROM traits WHERE contract_address_fk = ? AND trait_type = ?`;
+                        connection.query(sql, [contractAddress, trait_type], async (err, results, fields) => {
+                            if (err) console.log(err.message, 'inside attributes forEach no. 1');
+                            let traitId: number;
+                            if (results?.length === 0) {
+                                sql = `INSERT INTO traits (
+                                    contract_address_fk,
+                                    trait_type
+                                ) VALUES (?, ?)`;
+                                traitId = await new Promise((resolve) => {
+                                    connection.query(
+                                        sqlFormatter(sql),
+                                        [contractAddress, trait_type],
+                                        (err, result) => {
+                                            if (err) return console.log(err.message);
+                                            resolve(result.insertId);
+                                        }
+                                    );
+                                });
+                            } else {
+                                traitId = results[0].trait_id;
+                            }
+
                             sql = `INSERT INTO token_traits (
                                 trait_fk,
                                 trait_value,
                                 token_id_fk
                             ) VALUES (?, ?, ?)`;
 
-                            connection.query(
-                                sqlFormatter(sql),
-                                [traitInsertId, value, tokenInsertId],
-                                (err) => {
-                                    if (err) console.log(err.message);
-                                }
-                            );
+                            connection.query(sqlFormatter(sql), [traitId, value, tokenInsertId], (err) => {
+                                if (err) console.log(err.message);
+                            });
                         });
                     });
                 }

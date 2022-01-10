@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
     user: 'root',
     // replace with process.env values
     password: 'temp',
-    database: 'temp',
+    database: 'nft',
 });
 
 connection.connect((err) => {
